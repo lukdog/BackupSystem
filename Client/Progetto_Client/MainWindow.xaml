@@ -1,0 +1,79 @@
+﻿<Window x:Class="Progetto_Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Backup a Folder" Height="425" Width="600" ResizeMode="CanMinimize"  FontFamily="Calibri" FontSize="15" Foreground="#FF343D42" Background="{x:Null}" Closing="closeEvent" Icon="Icons\icon-App.ico">
+    <Grid Background="#FF343D42">
+        <TabControl Name="tabControl" Margin="10,22,10,10" BorderBrush="#FFCC554F" BorderThickness="3" Background="#FFF6F6F6" RenderTransformOrigin="0.489,0.436">
+            <TabItem Name="tabSync" Header="Sincronizzazione" BorderBrush="#FFCC554F"  BorderThickness="4" Foreground="#FF343D42">
+                <Grid>
+                    <Canvas x:Name="mainPanel" HorizontalAlignment="Center" Height="310" VerticalAlignment="Center"   Width="550" RenderTransformOrigin="0.495,0.808" Margin="0,-1,0,0">
+                        <TextBlock Name="stateBox" TextAlignment="Center"  Foreground="#FF343D42" Canvas.Left="15" TextWrapping="Wrap" Canvas.Top="100" Width="520" Height="40" Text="Sincronizzazione non Attiva" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+                        <ProgressBar Name="syncProg" Height="20" Width="250" Canvas.Top="150" Canvas.Left="150" Foreground="#FFBF6661" UseLayoutRounding="False" RenderTransformOrigin="0.5,0.45" Value="0"/>
+                        <Button Name="btnStart" Click="startSync" Content="Avvia" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="30" Canvas.Left="325" Canvas.Top="190"  Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White"  />
+                        <Button Name="btnStop" Click="stopSync" Content="Stop" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Height="30" Canvas.Left="325" Canvas.Top="190"  Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" Visibility="Hidden" />
+                        <Rectangle Fill="#FF343D42" HorizontalAlignment="Left" Height="2" Stroke="#FF343D42" VerticalAlignment="Top" Width="350" Canvas.Left="100" Canvas.Top="180"/>
+                        <TextBlock Canvas.Left="15" Text="Avvia la sincronizzazione automatica, verrà effettuato un backup in tempo reale della directory indicata, sul server da te scelto." Canvas.Top="15" Width="520" TextWrapping="Wrap"/>
+                        <Image Height="64" Canvas.Right="15" Canvas.Bottom="5" Width="64" Source="Icons\icon-App_64x64.png"/>
+
+                    </Canvas>
+                </Grid>
+            </TabItem>
+            <TabItem Name="tabVersion" BorderBrush="#FFCC554F" Background="#FFF6F6F6" BorderThickness="4" Foreground="#FF343D42" >
+                <TabItem.Header>
+                    <Label Content="Ripristino" MouseLeftButtonDown="refreshFilesList" HorizontalAlignment="Stretch" Height="28" Foreground="#FF343D42"/>
+                </TabItem.Header>
+                <Grid>
+                    <Canvas Name="versionPanel" HorizontalAlignment="Center" Height="310" VerticalAlignment="Center" Width="550" Visibility="Hidden">
+                        <TextBlock Canvas.Left="15" TextWrapping="Wrap" Text="Premi Avanti per ripristinare l'intera Directory, per ripristinare un singolo elemento sceglilo dall'elenco:" Canvas.Top="15" Width="520"/>
+                        <TextBlock Name="versionWaiting" Canvas.Left="15" TextWrapping="Wrap" Text="La creazione dell'elenco files è in corso..." Canvas.Top="64" Width="262"/>
+                        <TreeView Name="versionTree" Height="233" Canvas.Left="15" Canvas.Top="62" Width="419"/>
+                        <Button Name="btnRefresh" Content="Aggiorna" Canvas.Right="15" Canvas.Top="100" Width="90" Height="30" Click="refreshFilesList" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Button Name="btnRestore" Content="Avanti" Canvas.Right="15" Canvas.Top="62" Width="90" Height="30" Click="aksForVersions" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Button Name="btnCancel" Content="Annulla" Canvas.Right="15" Canvas.Top="141" Width="90" Height="30" Click="exitRestore" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Image Height="64" Canvas.Right="15" Canvas.Bottom="5" Width="64" Source="Icons\icon-App_64x64.png"/>
+                    </Canvas>
+                    <Canvas Name="versionListPanel" HorizontalAlignment="Center" Height="310" VerticalAlignment="Center" Width="550" Visibility="Hidden">
+                        <TextBlock Name="msgChsVersion" Canvas.Left="15" TextWrapping="Wrap" Text="Scegli quale versione vuoi ripristinare:" Canvas.Top="15" Width="520"/>
+                        <TextBlock Name="versionWaitingList" Canvas.Left="15" TextWrapping="Wrap" Text="La creazione dell'elenco versioni è in corso..." Canvas.Top="44" Width="417"/>
+                        <ListBox Name="versionList" Height="251" Canvas.Left="15" Canvas.Top="44" Width="419" Visibility="Hidden"/>
+                        <Button Name="btnRestoreVersion" Content="Ripristina" Canvas.Right="15" Canvas.Top="44" Width="90" Height="30" Click="restoreVersion" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Button Name="btnCancelVersion" Content="Annulla" Canvas.Right="15" Canvas.Top="82" Width="90" Height="30" Click="exitRestore" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Image Height="64" Canvas.Right="15" Canvas.Bottom="5" Width="64" Source="Icons\icon-App_64x64.png"/>
+                    </Canvas>
+                    <Canvas Name="restoringPanel" HorizontalAlignment="Center" Height="310" VerticalAlignment="Bottom" Width="550" Visibility="Visible">
+                        <Button Name="btnCancelRestoring" Content="Annulla" Canvas.Left="310" Canvas.Top="190" Width="90" Height="30" Click="exitRestore" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <TextBlock Name="stateRestBox" TextAlignment="Center"  Foreground="#FF343D42" Canvas.Left="15" TextWrapping="Wrap" Canvas.Top="100" Width="520" Height="39" Text="Avvio Ripristino" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+                        <ProgressBar Name="restProg" Height="20" Width="250" Canvas.Left="150" Canvas.Top="150" HorizontalAlignment="Center" Foreground="#FFBF6661" UseLayoutRounding="False" RenderTransformOrigin="0.481,0.5" Value="0"/>
+                        <Image Height="64" Canvas.Right="15" Canvas.Bottom="5" Width="64" Source="Icons\icon-App_64x64.png"/>
+                    </Canvas>
+                </Grid>
+            </TabItem>
+            <TabItem Name="tabSetting" Header="Opzioni" BorderBrush="#FFCC554F" Background="#FFF6F6F6" BorderThickness="4" Foreground="#FF343D42" >
+                <Grid>
+                    <Canvas Name="settingsPanel" HorizontalAlignment="Center" Height="310" VerticalAlignment="Bottom" Width="550">
+                        <Label Height="24" Width="166" Canvas.Left="32" Canvas.Top="15" Content="Cartella da sincronizzare:" Foreground="#FF343D42"/>
+                        <Image Height="16" Canvas.Left="15" Canvas.Top="21" Width="16" Source="Icons/icon-Folder_16x16.png"/>
+                        <TextBox Name="settingsFolderBox" Height="30" Canvas.Left="15" Text="" Canvas.Top="50" Width="420" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Disabled" BorderBrush="#FF697885" Foreground="#FF343D42"/>
+                        <Button Name="folderSelect" Content="Sfoglia..."  Canvas.Right="15" Canvas.Top="50" Width="85" Click="selectFolder" Height="30" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White"/>
+                        <Label Height="24" Width="144" Canvas.Left="32" Canvas.Top="91" Content="Nome Utente:" Foreground="#FF343D42"/>
+                        <Image Height="16" Canvas.Left="15" Canvas.Top="97" Width="16" Source="Icons/icon-User_16x16.png"/>
+                        <TextBox Name="settingsUserBox" Height="30" Canvas.Left="15" Text="" Canvas.Top="126" Width="150" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Disabled" BorderBrush="#FF697885" Foreground="#FF343D42"/>
+                        <Label Height="24" Width="144" Canvas.Left="217" Canvas.Top="91" Content="Password:" Foreground="#FF343D42"/>
+                        <Image Height="16" Canvas.Left="200" Canvas.Top="97" Width="16" Source="Icons/icon-Pwd_16x16.png"/>
+                        <PasswordBox Name="settingsPwdBox" Height="30" Canvas.Left="200"  Canvas.Top="126" Width="150" VerticalContentAlignment="Center"  BorderBrush="#FF697885" Foreground="#FF343D42"/>
+                        <Label Height="24" Width="144" Canvas.Left="32" Canvas.Top="167" Content="IP e Porta del Server:"/>
+                        <Image Height="16" Canvas.Left="15" Canvas.Top="173" Width="16" Source="Icons/icon-Server_16x16.png"/>
+                        <TextBox Name="settingsServerBox" Height="30" Canvas.Left="15" Text="" Canvas.Top="202" Width="150" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Disabled" BorderBrush="#FF697885" Foreground="#FF343D42" />
+                        <TextBox Name="settingsPortBox" Height="30" Canvas.Left="200" Text="" Canvas.Top="202" Width="50" VerticalContentAlignment="Center" VerticalScrollBarVisibility="Disabled" BorderBrush="#FF697885" Foreground="#FF343D42" />
+                        <Label Content=":" Canvas.Left="176" Canvas.Top="202"/>
+                        <Button Content="Salva impostazioni" Canvas.Right="15" Canvas.Top="202" Width="128" Height="30" Click="saveSettings" Background="#FFCC554F" BorderBrush="#FFCC554F" Foreground="White" />
+                        <Image Height="64" Canvas.Right="15" Canvas.Bottom="5" Width="64" Source="Icons\icon-App_64x64.png"/>
+                    </Canvas>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+
+    </Grid>
+</Window>
